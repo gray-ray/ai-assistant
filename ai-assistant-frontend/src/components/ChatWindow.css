@@ -1,0 +1,122 @@
+.chat-window {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--bg, #fff);
+  min-width: 0;
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border-color, #eee);
+  background: var(--bg, #fff);
+  position: relative;
+  min-height: 52px;
+}
+
+.chat-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text, #333);
+  max-width: 60%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.streaming-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #4f8cff;
+  background: rgba(79, 140, 255, 0.1);
+  padding: 3px 10px;
+  border-radius: 10px;
+}
+
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4f8cff;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* 空状态（未选择会话） */
+.chat-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary, #999);
+  gap: 12px;
+}
+
+.chat-empty-icon {
+  font-size: 64px;
+  opacity: 0.5;
+}
+
+.chat-empty h3 {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0;
+  color: var(--text, #333);
+}
+
+.chat-empty p {
+  font-size: 14px;
+  margin: 0;
+}
+
+.chat-empty-btn {
+  margin-top: 12px;
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: none;
+  background: #4f8cff;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.2s;
+}
+
+.chat-empty-btn:hover {
+  background: #3b7aef;
+}
+
+/* 暗色模式 */
+@media (prefers-color-scheme: dark) {
+  .chat-window {
+    background: #1e1e2e;
+  }
+
+  .chat-header {
+    background: #1e1e2e;
+    border-bottom-color: #2a2a3e;
+  }
+
+  .chat-title {
+    color: #e0e0e0;
+  }
+
+  .chat-empty h3 {
+    color: #e0e0e0;
+  }
+}

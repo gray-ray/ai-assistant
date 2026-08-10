@@ -1,0 +1,67 @@
+.chat-page {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* 空状态 */
+.chat-empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg, #fff);
+}
+
+.empty-state-content {
+  text-align: center;
+  padding: 40px;
+}
+
+.empty-icon {
+  font-size: 72px;
+  margin-bottom: 20px;
+}
+
+.empty-state-content h3 {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: var(--text, #333);
+}
+
+.empty-state-content p {
+  font-size: 14px;
+  color: var(--text-secondary, #999);
+  margin: 0 0 24px 0;
+}
+
+.create-btn {
+  padding: 12px 28px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #4f8cff, #4facfe);
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 12px rgba(79, 140, 255, 0.3);
+}
+
+.create-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(79, 140, 255, 0.4);
+}
+
+@media (prefers-color-scheme: dark) {
+  .chat-empty-state {
+    background: #1e1e2e;
+  }
+
+  .empty-state-content h3 {
+    color: #e0e0e0;
+  }
+}

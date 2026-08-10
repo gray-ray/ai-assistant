@@ -1,0 +1,143 @@
+.message-input-container {
+  padding: 16px 24px 20px;
+  border-top: 1px solid var(--border-color, #eee);
+  background: var(--bg, #fff);
+}
+
+.message-input-box {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 12px;
+  background: var(--input-bg, #fafafa);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.message-input-box:focus-within {
+  border-color: #4f8cff;
+  box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.1);
+}
+
+.message-input-box.streaming {
+  border-color: #ffa940;
+}
+
+.message-textarea {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  line-height: 1.6;
+  resize: none;
+  max-height: 160px;
+  font-family: inherit;
+  color: var(--text, #333);
+  padding: 4px 0;
+}
+
+.message-textarea::placeholder {
+  color: var(--text-secondary, #999);
+}
+
+.message-textarea:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.input-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  padding-bottom: 2px;
+}
+
+.char-count {
+  font-size: 11px;
+  color: var(--text-secondary, #bbb);
+  white-space: nowrap;
+}
+
+.char-count.warn {
+  color: #faad14;
+}
+
+.char-count.error {
+  color: #ff4d4f;
+}
+
+.send-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: #4f8cff;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.send-btn:hover:not(:disabled) {
+  background: #3b7aef;
+  transform: scale(1.05);
+}
+
+.send-btn:disabled {
+  background: #d0d0d0;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.stop-btn {
+  width: auto;
+  padding: 0 14px;
+  gap: 6px;
+  background: #ff6b6b;
+  font-size: 13px;
+}
+
+.stop-btn:hover {
+  background: #ee5a5a !important;
+}
+
+.stop-btn span {
+  font-size: 13px;
+}
+
+.input-footer {
+  text-align: center;
+  margin-top: 8px;
+}
+
+.input-footer span {
+  font-size: 11px;
+  color: var(--text-secondary, #bbb);
+}
+
+/* 暗色模式 */
+@media (prefers-color-scheme: dark) {
+  .message-input-container {
+    border-top-color: #2a2a3e;
+    background: #1e1e2e;
+  }
+
+  .message-input-box {
+    border-color: #3a3a5e;
+    background: #2a2a3e;
+  }
+
+  .message-textarea {
+    color: #e0e0e0;
+  }
+
+  .send-btn:disabled {
+    background: #3a3a5e;
+  }
+}
