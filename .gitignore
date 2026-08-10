@@ -33,6 +33,8 @@ build/
 .vscode/
 
 
-/upload
-
-/vector-store
+# 忽略 upload 和 vector-store 下的运行时文件，但保留 .gitkeep 以提交空目录
+/upload/*
+!/upload/.gitkeep
+/vector-store/*
+!/vector-store/.gitkeep
