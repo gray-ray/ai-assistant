@@ -33,6 +33,6 @@ build/
 .vscode/
 
 
-/upload/**
+/upload
 
-/vector-store/**
+/vector-store
