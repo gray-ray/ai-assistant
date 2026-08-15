@@ -1,6 +1,6 @@
 # AI Assistant
 
-基于 Spring Boot 3 + Spring AI + React 的企业文档智能分析平台。支持文档上传解析、向量化存储、智能检索、多轮对话问答、引用溯源与事实校验等完整 RAG 能力。
+基于 Spring Boot 3 + Spring AI + React 的AI助手平台。支持文档上传解析、向量化存储、智能检索、多轮对话问答、引用溯源与事实校验等完整 RAG 能力。
 
 ## ✨ 功能特性
 
