@@ -87,28 +87,14 @@
 
 ```
 ai-assistant/
-├── src/                                    # 后端源码（Spring Boot）
-│   └── main/java/org/grayray/aiassistant/
-│       ├── chat/                           # 聊天 & RAG 模块
-│       │   ├── controller/                 # ChatController
-│       │   ├── service/                    # 会话、消息、RAG 服务
-│       │   │   ├── router/                 # Query Router 查询路由
-│       │   │   ├── search/                 # 向量检索服务
-│       │   │   ├── rerank/                 # Rerank 重排服务
-│       │   │   ├── context/                # 上下文组装
-│       │   │   ├── prompt/                 # Prompt 模板构建
-│       │   │   └── groundedness/           # 事实支撑性校验
-│       │   ├── entity/                     # 实体类
-│       │   ├── mapper/                     # MyBatis Mapper
-│       │   └── vo/                         # 视图对象
-│       ├── document/                       # 文档上传 & 处理模块
-│       ├── user/                           # 用户模块
-│       └── common/                         # 公共组件（配置、异常、工具等）
-├── src/main/resources/
-│   ├── application.yaml                    # 应用配置
-│   ├── db/schema.sql                       # 数据库初始化脚本
-│   ├── prompts/rag/                        # RAG Prompt 模板
-│   └── mapper/                             # MyBatis XML 映射
+├── pom.xml                                 # Maven 父工程
+├── ai-assistant-common/                    # 通用响应、异常、配置
+├── ai-assistant-rag-api/                   # RAG 对外契约和模型
+├── ai-assistant-rag-core/                  # RAG 实现、Prompt、向量存储适配
+├── ai-assistant-user/                      # 用户模块
+├── ai-assistant-document/                  # 文档上传、解析、清洗、分块
+├── ai-assistant-chat/                      # 聊天会话、消息、SSE、RAG 编排
+├── ai-assistant-server/                    # 启动类、应用配置、SQL、最终打包
 ├── ai-assistant-frontend/                  # 前端源码（React + Vite）
 │   ├── src/
 │   │   ├── api/                            # API 层
@@ -120,7 +106,6 @@ ai-assistant/
 ├── docs/                                   # 详细设计文档
 ├── upload/                                 # 文件上传存储目录（运行时）
 ├── vector-store/                           # 向量数据持久化目录（运行时）
-├── pom.xml                                 # Maven 配置
 └── PROJECT_STRUCTURE.md                    # 项目结构详解
 ```
 
@@ -136,6 +121,89 @@ ai-assistant/
 | Node.js | 18+ | 前端构建运行时 |
 | Ollama | 最新版 | 本地 Embedding 模型服务 |
 | Python (可选) | 3.10+ | Rerank 重排服务（可选，不启用则跳过重排） |
+
+---
+
+## ▶️ 如何运行项目
+
+项目需要先启动后端依赖，再分别运行后端和前端。推荐按下面顺序操作：
+
+### 1. 准备 MySQL
+
+确保 MySQL 8.0+ 已启动，并在项目根目录执行初始化 SQL：
+
+```bash
+mysql -u root -p < ai-assistant-server/src/main/resources/db/schema.sql
+```
+
+默认连接配置在 `ai-assistant-server/src/main/resources/application.yaml`：
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/ai_assistant
+    username: root
+    password: 123456
+```
+
+如果本地 MySQL 用户名或密码不同，请先修改 `application.yaml`。
+
+### 2. 准备 Ollama Embedding 模型
+
+后端启动时会连接本地 Ollama，并使用 `bge-m3` 做向量化。请先安装 Ollama，然后执行：
+
+```bash
+ollama pull bge-m3
+ollama list
+```
+
+确认 Ollama 服务运行在 `http://localhost:11434`。
+
+### 3. 配置 DeepSeek API Key
+
+打开 `ai-assistant-server/src/main/resources/application.yaml`，将 `spring.ai.deepseek.api-key` 修改为你自己的 DeepSeek API Key。
+
+### 4. 启动后端
+
+在项目根目录执行：
+
+```bash
+# Windows PowerShell
+.\mvnw.cmd -pl ai-assistant-server -am spring-boot:run
+
+# macOS / Linux
+./mvnw -pl ai-assistant-server -am spring-boot:run
+```
+
+后端默认运行在：
+
+- API 服务：http://localhost:8900
+- Swagger 文档：http://localhost:8900/swagger-ui.html
+
+### 5. 启动前端
+
+新开一个终端，执行：
+
+```bash
+cd ai-assistant-frontend
+npm install
+npm run dev
+```
+
+前端默认运行在：http://localhost:5173
+
+开发环境下，前端会通过 Vite 代理把 `/api` 请求转发到 `http://localhost:8900`。如需修改后端地址，可设置 `VITE_PROXY_TARGET`。
+
+### 6. 可选：启动 Rerank 服务
+
+当前 `application.yaml` 中 `ai.rerank.enabled` 默认为 `false`，不启动 Rerank 服务也可以正常运行项目。如需启用重排功能，请先部署兼容 `/rerank` 接口的 Python 服务，再将配置改为：
+
+```yaml
+ai:
+  rerank:
+    enabled: true
+    base-url: http://localhost:8000
+```
 
 ---
 
@@ -155,7 +223,7 @@ cd ai-assistant
 确保 MySQL 服务已启动，然后执行初始化脚本创建数据库和表：
 
 ```bash
-mysql -u root -p < src/main/resources/db/schema.sql
+mysql -u root -p < ai-assistant-server/src/main/resources/db/schema.sql
 ```
 
 > 默认数据库名：`ai_assistant`，字符集：`utf8mb4`
@@ -195,7 +263,7 @@ pip install FlagEmbedding fastapi uvicorn
 
 ### 3. 配置说明
 
-后端配置文件位于 `src/main/resources/application.yaml`，主要配置项如下：
+后端配置文件位于 `ai-assistant-server/src/main/resources/application.yaml`，主要配置项如下：
 
 #### 3.1 服务端口
 
@@ -211,7 +279,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/ai_assistant
     username: root
-    password: 12345678    # 请修改为你的 MySQL 密码
+    password: 123456    # 请修改为你的 MySQL 密码
 ```
 
 #### 3.3 DeepSeek API 配置
@@ -277,7 +345,7 @@ ai:
 ```yaml
 ai:
   rerank:
-    enabled: true                 # 是否启用重排
+    enabled: false                # 是否启用重排
     model: bge-reranker-v2-m3     # 重排模型名称
     base-url: http://localhost:8000  # 重排服务地址
     top-m: 4                      # 重排后保留数量
@@ -336,14 +404,14 @@ server: {
 
 ```bash
 # 方式一：使用 Maven Wrapper（推荐）
-./mvnw spring-boot:run
+./mvnw -pl ai-assistant-server -am spring-boot:run
 
 # 方式二：使用本地 Maven
-mvn spring-boot:run
+mvn -pl ai-assistant-server -am spring-boot:run
 
 # 方式三：先打包再运行
-./mvnw clean package -DskipTests
-java -jar target/ai-assistant-0.0.1-SNAPSHOT.jar
+./mvnw -pl ai-assistant-server -am clean package -DskipTests
+java -jar ai-assistant-server/target/ai-assistant-server-0.0.1-SNAPSHOT.jar
 ```
 
 启动成功后访问：
@@ -482,16 +550,16 @@ npm run build
 ### 后端构建
 
 ```bash
-./mvnw clean package -DskipTests
+./mvnw -pl ai-assistant-server -am clean package -DskipTests
 ```
 
-构建产物：`target/ai-assistant-0.0.1-SNAPSHOT.jar`
+构建产物：`ai-assistant-server/target/ai-assistant-server-0.0.1-SNAPSHOT.jar`
 
 ### 生产部署示例
 
 ```bash
 # 运行 JAR 包，指定环境变量覆盖配置
-java -jar ai-assistant-0.0.1-SNAPSHOT.jar \
+java -jar ai-assistant-server/target/ai-assistant-server-0.0.1-SNAPSHOT.jar \
   --spring.datasource.password=your_password \
   --spring.ai.deepseek.api-key=your_api_key \
   --ai.vector-store.persistence-path=/data/vector-store

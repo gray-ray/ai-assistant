@@ -20,6 +20,8 @@ export interface ChatSession {
   title: string
   sessionType: string
   modelName: string
+  /** 绑定的知识库 ID，普通会话为空 */
+  knowledgeId?: number | null
   createTime: string
   updateTime: string
 }
@@ -92,6 +94,7 @@ export interface CreateSessionRequest {
   userId: number
   title?: string
   sessionType?: string
+  knowledgeId?: number
 }
 
 export interface SendMessageRequest {

@@ -57,13 +57,12 @@ export function renderCitationLinks(
     if (typeof child === 'string') {
       return splitByCitation(child)
     }
-    if (isValidElement(child)) {
+    if (isValidElement<{ children?: ReactNode }>(child)) {
       const tagName = typeof child.type === 'string' ? child.type : ''
       if (tagName === 'code' || tagName === 'pre') {
         return child
       }
       return cloneElement(child, {
-        ...child.props,
         children: renderCitationLinks(child.props.children),
       })
     }

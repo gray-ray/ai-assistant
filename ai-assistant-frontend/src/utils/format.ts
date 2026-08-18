@@ -77,3 +77,19 @@ export function truncateText(text: string, maxLen = 20): string {
   if (text.length <= maxLen) return text
   return text.slice(0, maxLen) + '…'
 }
+
+/**
+ * 文件大小格式化
+ */
+export function formatFileSize(size?: number | null): string {
+  if (size == null || Number.isNaN(size)) return '-'
+  if (size < 1024) return `${size} B`
+  const units = ['KB', 'MB', 'GB', 'TB']
+  let value = size / 1024
+  let unitIndex = 0
+  while (value >= 1024 && unitIndex < units.length - 1) {
+    value /= 1024
+    unitIndex += 1
+  }
+  return `${value.toFixed(value >= 10 ? 0 : 1)} ${units[unitIndex]}`
+}

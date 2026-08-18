@@ -9,7 +9,7 @@ import type { ChatMessage } from '../api/chat'
 import Markdown from './Markdown'
 
 // 临时测试用的 userId 和 sessionId（后续接入登录/会话管理后替换）
-const TEST_USER_ID = 1
+const TEST_USER_ID = 2
 const TEST_SESSION_ID = 'demo-session-001'
 
 export default function ChatDemo() {

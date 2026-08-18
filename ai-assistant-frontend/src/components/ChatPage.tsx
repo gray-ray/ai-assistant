@@ -2,12 +2,23 @@
  * 聊天页面主组件
  * 整合会话列表侧边栏 + 聊天窗口
  */
+import { useEffect, useRef } from 'react'
 import SessionSidebar from './SessionSidebar'
 import ChatWindow from './ChatWindow'
 import { useChatSession } from '../hooks/useChatSession'
 import './ChatPage.css'
 
-export default function ChatPage() {
+interface KnowledgeChatRequest {
+  requestId: number
+  knowledgeId: number
+  knowledgeName: string
+}
+
+interface ChatPageProps {
+  startKnowledgeChatRequest?: KnowledgeChatRequest | null
+}
+
+export default function ChatPage({ startKnowledgeChatRequest }: ChatPageProps) {
   const {
     sessions,
     currentSession,
@@ -23,6 +34,7 @@ export default function ChatPage() {
     sendMessage,
     stopGeneration,
   } = useChatSession()
+  const handledKnowledgeRequestRef = useRef<number | null>(null)
 
   const handleCreateSession = async () => {
     await createNewSession()
@@ -31,6 +43,17 @@ export default function ChatPage() {
   const handleSelectSession = async (sessionId: string) => {
     await selectSession(sessionId)
   }
+
+  useEffect(() => {
+    if (!startKnowledgeChatRequest) return
+    if (handledKnowledgeRequestRef.current === startKnowledgeChatRequest.requestId) return
+
+    handledKnowledgeRequestRef.current = startKnowledgeChatRequest.requestId
+    createNewSession(`基于 ${startKnowledgeChatRequest.knowledgeName} 的问答`, {
+      knowledgeId: startKnowledgeChatRequest.knowledgeId,
+      sessionType: 'knowledge',
+    })
+  }, [startKnowledgeChatRequest, createNewSession])
 
   return (
     <div className="chat-page">

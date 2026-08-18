@@ -1,5 +1,56 @@
 .app-container {
   width: 100vw;
   height: 100vh;
+  display: flex;
   overflow: hidden;
+}
+
+.app-rail {
+  width: 72px;
+  min-width: 72px;
+  height: 100vh;
+  padding: 12px 8px;
+  border-right: 1px solid var(--sidebar-border, #2a2a3e);
+  background: #111827;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.app-rail-btn {
+  width: 56px;
+  height: 58px;
+  border: none;
+  border-radius: 8px;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.62);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.app-rail-btn span {
+  font-size: 12px;
+  line-height: 1;
+}
+
+.app-rail-btn:hover,
+.app-rail-btn.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.app-rail-btn.active {
+  box-shadow: inset 3px 0 0 var(--accent, #4f8cff);
+}
+
+.app-view {
+  flex: 1;
+  min-width: 0;
+  height: 100vh;
 }

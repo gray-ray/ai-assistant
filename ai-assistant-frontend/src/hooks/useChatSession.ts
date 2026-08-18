@@ -19,7 +19,7 @@ import type { ChatMessageVO, ChatSession, CitationVO } from '../types/chat'
 import { useSSE } from './useSSE'
 
 // 开发阶段使用固定 userId，后续接入登录后替换
-const DEFAULT_USER_ID = 1
+const DEFAULT_USER_ID = 2
 // 自动重命名的最大标题长度（从首条消息截取）
 const AUTO_TITLE_MAX_LEN = 20
 
@@ -61,7 +61,10 @@ export interface UseChatSessionReturn {
 
   // 会话操作
   selectSession: (sessionId: string) => Promise<void>
-  createNewSession: (title?: string) => Promise<ChatSession | null>
+  createNewSession: (
+    title?: string,
+    options?: { knowledgeId?: number; sessionType?: string },
+  ) => Promise<ChatSession | null>
   renameSession: (sessionId: string, title: string) => Promise<boolean>
   deleteSession: (sessionId: string) => Promise<boolean>
   refreshSessions: () => Promise<void>
@@ -163,7 +166,10 @@ export function useChatSession(options: UseChatSessionOptions = {}): UseChatSess
   // ========== 创建会话 ==========
 
   const createNewSession = useCallback(
-    async (title?: string): Promise<ChatSession | null> => {
+    async (
+      title?: string,
+      createOptions: { knowledgeId?: number; sessionType?: string } = {},
+    ): Promise<ChatSession | null> => {
       stopStream()
       resetStream()
       wasStreamingRef.current = false
@@ -172,7 +178,9 @@ export function useChatSession(options: UseChatSessionOptions = {}): UseChatSess
         const session = await apiCreateSession({
           userId,
           title: title || '新会话',
-          sessionType: 'normal',
+          sessionType:
+            createOptions.sessionType || (createOptions.knowledgeId ? 'knowledge' : 'normal'),
+          knowledgeId: createOptions.knowledgeId,
         })
         setSessions((prev) => [session, ...prev])
         setCurrentSessionId(session.sessionId)

@@ -38,3 +38,7 @@ build/
 !/upload/.gitkeep
 /vector-store/*
 !/vector-store/.gitkeep
+**/upload/*
+!**/upload/.gitkeep
+**/vector-store/*
+!**/vector-store/.gitkeep
