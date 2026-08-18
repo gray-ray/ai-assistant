@@ -97,9 +97,20 @@ spring:
 
 # ======== 业务自定义配置 ========
 ai:
+  upload:
+    # 当前阶段使用本地存储，后续可扩展为对象存储
+    base-dir: ./upload
+    url-prefix: /upload
+    storage-type: local
+    public-static-enabled: true
+    allowed-extensions:
+      - .pdf
+    allowed-content-types:
+      - application/pdf
+    max-origin-file-name-length: 255
   embedding:
     # 单次批量向量化的 chunk 数。大 PDF + 本地 Ollama/GPU 场景下建议从 1 开始，稳定后再逐步调大。
-    batch-size: 1
+    batch-size: 5
   vector-store:
     # 是否在日志中打印示例向量的前几维（调试用，生产关闭）
     log-sample-vector: false

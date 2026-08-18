@@ -53,10 +53,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
         String fileType = documentInfo.getFileType();
         if (fileType == null || !fileType.equalsIgnoreCase(".pdf")) {
             log.info("非 PDF 文件跳过解析, documentId={}, fileType={}", documentId, fileType);
-            // 非 PDF 直接标记为 completed（无内容）
-            documentInfo.setProcessStatus("completed");
-            documentInfo.setProcessError(null);
-            documentInfoMapper.updateById(documentInfo);
+            markFailed(documentInfo, "不支持的文件类型: " + fileType);
             return;
         }
 
@@ -88,6 +85,10 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
             // 文本切片 (章节 → 段落 → Token长度 → Overlap → Metadata)
             List<TextChunk> chunks = textChunkService.chunk(
                     cleanedText, knowledgeId, documentInfo.getId(), documentInfo.getOriginFileName(), chunkVersion);
+            if (chunks.isEmpty()) {
+                markFailed(documentInfo, "未提取到可检索文本，请上传可复制文本的 PDF");
+                return;
+            }
 
             if (knowledgeId != null) {
                 documentChunkService.saveTextChunks(knowledgeId, documentInfo.getId(), chunks);
